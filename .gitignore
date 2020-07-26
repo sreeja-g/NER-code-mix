@@ -126,3 +126,5 @@ dmypy.json
 
 /data/*
 /processed_data/*
+/saved_models/*
+/sentence_data/*

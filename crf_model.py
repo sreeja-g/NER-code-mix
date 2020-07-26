@@ -2,8 +2,10 @@ from sklearn_crfsuite import CRF
 from sklearn_crfsuite.metrics import flat_classification_report, flat_f1_score
 
 import featureVec
+# import feactureVecWithLang
 
 data = featureVec.numericFeatures()
+# data = feactureVecWithLang.numericFeatures()
 
 X_train = data['X_train']
 y_train = data['y_train']
@@ -27,9 +29,6 @@ labels = list(crf.classes_)
 
 y_pred = crf.predict(X_test)
 
-flat_f1_score(y_test, y_pred,
-                      average='weighted', labels=labels)
-
 sorted_labels = sorted(
     labels,
     key=lambda name: (name[1:], name[0])
@@ -37,3 +36,7 @@ sorted_labels = sorted(
 print(flat_classification_report(
     y_test, y_pred, labels=sorted_labels, digits=3
 ))
+
+print(flat_f1_score(y_test, y_pred,
+                      average='weighted', labels=labels)
+)

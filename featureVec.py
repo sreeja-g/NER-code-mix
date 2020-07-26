@@ -1,5 +1,7 @@
 import pandas as pd
 import csv
+from gensim.models import FastText
+import numpy as np
 
 class SentenceGetter(object):
             
@@ -43,8 +45,19 @@ def numericFeatures():
 
     sentences = getter.sentences
 
+    def get_features(word):
+        word = word.lower()
+        vectors = []
+        try:
+            vectors=model[word]
+        except: 
+            vectors=np.zeros(100,)
+        return vectors
+
     def word2features(sent, i):
-        word = sent[i][0]  
+        word = sent[i][0] 
+        word_embedding = get_features(word)
+
         features = {
             'bias': 1.0,
             'word': word2idx[word],
@@ -60,6 +73,10 @@ def numericFeatures():
             'word.isAlpha()': binaryIdx[str(word.isalpha())],
             'word.Tag': tag2idx[sent[i][1]],
         }
+
+        for iv, value in enumerate(word_embedding):
+            features['v{}'.format(iv)] = value
+
         if i > 0:
             word1 = sent[i-1][0]
             features.update({
@@ -107,6 +124,9 @@ def numericFeatures():
 
     csv_columns = ['+1:word', '+1:word.1stUpper()', '+1:word.isAlpha()', '+1:word.isdigit()', '+1:word.istitle()','+1:word.isupper()', '+1:word.lower()', '+1:word.startsWith#()', '+1:word.startsWith@()', 'BOS', '-1:word', '-1:word.1stUpper()', '-1:word.isAlpha()', '-1:word.isdigit()', '-1:word.istitle()', '-1:word.isupper()','-1:word.lower()', '-1:word.startsWith#()', '-1:word.startsWith@()', 'EOS', 'bias', 'word', 'word.1stUpper()', 'word.isAlpha()', 'word.isdigit()', 'word.istitle()','word.isupper()', 'word.lower()', 'word.startsWith#()', 'word.startsWith@()', 'word[-2:]', 'word[-3:]', 'word.Tag']
     
+    wordembdding=get_features("Gully")
+    for iv,value in enumerate(wordembdding):
+        csv_columns.append('v{}'.format(iv))
 
     with open('processed_data/featureVec.csv', 'w') as ofile:
         writer = csv.DictWriter(ofile, csv_columns)
@@ -129,3 +149,4 @@ def numericFeatures():
 
 
 
+numericFeatures()

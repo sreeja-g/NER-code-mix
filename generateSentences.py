@@ -35,3 +35,7 @@ pickle_out.close()
 pickle_out = open("sentence_data/test_data.pickle","wb")
 pickle.dump(sentences[int(len(sentences)*0.7):], pickle_out)
 pickle_out.close()
+
+# pickle_out = open("sentence_data/sentences.pickle","wb")
+# pickle.dump(sentences, pickle_out)
+# pickle_out.close()

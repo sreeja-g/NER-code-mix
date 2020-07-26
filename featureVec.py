@@ -22,8 +22,14 @@ class SentenceGetter(object):
         except:
             return None
 
+def mean_normalize(num,max_,min_):
+
+    return 2*((num-min_)/(max_-min_))-1        
+
 
 def numericFeatures():
+
+    model = FastText.load('saved_models/fasttext.model')
 
     data = pd.read_csv("processed_data/annotatedVec.tsv",sep='\t', quoting=csv.QUOTE_NONE, header=None)
     data.columns=['Sent', 'words', 'pos-tag', 'ner-tag']
@@ -34,11 +40,11 @@ def numericFeatures():
     words.append("ENDPAD")
     tags = list(set(data["ner-tag"].values))
 
-    word2idx = {w: i for i, w in enumerate(words)}
+    word2idx = {w: mean_normalize(i,len(words)-1,0) for i, w in enumerate(words)}
     tag2idx = {t: i for i, t in enumerate(tags)}
-    word2Suff2idx = {w[-2:]: i for i, w in enumerate(words)}
-    word3Suff2idx = {w[-3:]: i for i, w in enumerate(words)}
-    wordLower2idx = {w.lower(): i for i, w in enumerate(words)}
+    word2Suff2idx = {w[-2:]: mean_normalize(i,len(words)-1,0) for i, w in enumerate(words)}
+    word3Suff2idx = {w[-3:]: mean_normalize(i,len(words)-1,0) for i, w in enumerate(words)}
+    wordLower2idx = {w.lower(): mean_normalize(i,len(words)-1,0) for i, w in enumerate(words)}
     binaryIdx = {"True": 1, "False": 0}
 
     getter = SentenceGetter(data)

@@ -13,6 +13,10 @@ class SentenceGetter(object):
                                                            s["ner-tag"].values.tolist())]
         self.grouped = self.data.groupby("Sent").apply(agg_func)
         self.sentences = [s for s in self.grouped][1:]
+        
+        sentence_text_agg_func = lambda s: ' '.join(s["words"].values.tolist())
+        self.grouped_sentence_text = self.data.groupby("Sent").apply(sentence_text_agg_func)
+        self.sentence_text = [s for s in self.grouped_sentence_text][1:]
     
     def get_next(self):
         try:
@@ -143,14 +147,14 @@ def numericFeatures():
             
                 writer.writerow(d)  
 
-    X_train = [sent2features(s) for s in sentences[:int(len(sentences)*0.7)]]
+    X_train = [[{key:val for key, val in each.items() if key != 'word.Tag'} for each in sent2features(s)] for s in sentences[:int(len(sentences)*0.7)]]
     y_train = [sent2labels(s) for s in sentences[:int(len(sentences)*0.7)]]
 
-    X_test = [sent2features(s) for s in sentences[int(len(sentences)*0.7):]]
+    X_test = [[{key:val for key, val in each.items() if key != 'word.Tag'} for each in sent2features(s)] for s in sentences[int(len(sentences)*0.7):]]
     y_test = [sent2labels(s) for s in sentences[int(len(sentences)*0.7):]]
 
 
-    return {'X_train':X_train, 'y_train':y_train, 'X_test':X_test, 'y_test':y_test}
+    return {'X_train':X_train, 'y_train':y_train, 'X_test':X_test, 'y_test':y_test, 'sentences':getter.sentence_text}
 
 
 

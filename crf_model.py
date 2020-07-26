@@ -1,6 +1,8 @@
 from sklearn_crfsuite import CRF
 from sklearn_crfsuite.metrics import flat_classification_report, flat_f1_score
 
+import csv
+
 import featureVec
 # import feactureVecWithLang
 
@@ -40,3 +42,20 @@ print(flat_classification_report(
 print(flat_f1_score(y_test, y_pred,
                       average='weighted', labels=labels)
 )
+
+
+csv_columns = ['Sentence','True','Predicted']
+test_sentences = data['sentences'][int(0.7*len(data['sentences'])):]
+
+with open('results_predicted/result.tsv', 'w') as ofile:
+        writer = csv.writer(ofile, delimiter='\t')
+        writer.writerow(csv_columns)
+
+        for i in range(len(test_sentences)):
+
+            new_row = []
+            new_row.append(test_sentences[i])
+            new_row.append(y_test[i])
+            new_row.append(y_pred[i])
+
+            writer.writerow(new_row)  

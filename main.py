@@ -1,4 +1,4 @@
-# import featureVec
+import featureVec
 # import feactureVecWithLang
 
 file_name = 'data/NER Hindi English Code Mixed Tweets.tsv'
@@ -21,5 +21,5 @@ with open('processed_data/annotatedVec.tsv', 'w') as f:
     for item in rows:
         f.write(item)
 
-# featureVec.numericFeatures()
+featureVec.numericFeatures()
 # feactureVecWithLang.numericFeatures()

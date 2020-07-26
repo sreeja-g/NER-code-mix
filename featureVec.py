@@ -148,5 +148,3 @@ def numericFeatures():
 
 
 
-
-numericFeatures()

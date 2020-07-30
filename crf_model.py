@@ -3,11 +3,10 @@ from sklearn_crfsuite.metrics import flat_classification_report, flat_f1_score
 
 import csv
 
-import featureVec
-# import feactureVecWithLang
+# import featureVec as fV
+import featureVecWithFastText as fV
 
-data = featureVec.numericFeatures()
-# data = feactureVecWithLang.numericFeatures()
+data = fV.numericFeatures()
 
 X_train = data['X_train']
 y_train = data['y_train']
@@ -53,9 +52,13 @@ with open('results_predicted/result.tsv', 'w') as ofile:
 
         for i in range(len(test_sentences)):
 
-            new_row = []
-            new_row.append(test_sentences[i])
-            new_row.append(y_test[i])
-            new_row.append(y_pred[i])
+            for j in range(len(y_test[i])):
 
-            writer.writerow(new_row)  
+                new_row = []
+                new_row.append(test_sentences[i].split(' ')[j])
+                new_row.append(y_test[i][j])
+                new_row.append(y_pred[i][j])
+
+                writer.writerow(new_row) 
+
+            writer.writerow(['','',''])  

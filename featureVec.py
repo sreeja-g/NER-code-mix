@@ -1,6 +1,5 @@
 import pandas as pd
 import csv
-from gensim.models import FastText
 import numpy as np
 
 class SentenceGetter(object):
@@ -33,10 +32,8 @@ def mean_normalize(num,max_,min_):
 
 def numericFeatures():
 
-    model = FastText.load('saved_models/fasttext.model')
-
     data = pd.read_csv("processed_data/annotatedVec.tsv",sep='\t', quoting=csv.QUOTE_NONE, header=None)
-    data.columns=['Sent', 'words', 'pos-tag', 'ner-tag']
+    data.columns=['Sent', 'words', 'lang', 'ner-tag']
 
     data = data.fillna(method="ffill")
 
@@ -55,18 +52,8 @@ def numericFeatures():
 
     sentences = getter.sentences
 
-    def get_features(word):
-        word = word.lower()
-        vectors = []
-        try:
-            vectors=model[word]
-        except: 
-            vectors=np.zeros(100,)
-        return vectors
-
     def word2features(sent, i):
         word = sent[i][0] 
-        word_embedding = get_features(word)
 
         features = {
             'bias': 1.0,
@@ -83,9 +70,6 @@ def numericFeatures():
             'word.isAlpha()': binaryIdx[str(word.isalpha())],
             'word.Tag': tag2idx[sent[i][1]],
         }
-
-        for iv, value in enumerate(word_embedding):
-            features['v{}'.format(iv)] = value
 
         if i > 0:
             word1 = sent[i-1][0]
@@ -133,10 +117,6 @@ def numericFeatures():
     y = [sent2labels(s) for s in sentences]
 
     csv_columns = ['+1:word', '+1:word.1stUpper()', '+1:word.isAlpha()', '+1:word.isdigit()', '+1:word.istitle()','+1:word.isupper()', '+1:word.lower()', '+1:word.startsWith#()', '+1:word.startsWith@()', 'BOS', '-1:word', '-1:word.1stUpper()', '-1:word.isAlpha()', '-1:word.isdigit()', '-1:word.istitle()', '-1:word.isupper()','-1:word.lower()', '-1:word.startsWith#()', '-1:word.startsWith@()', 'EOS', 'bias', 'word', 'word.1stUpper()', 'word.isAlpha()', 'word.isdigit()', 'word.istitle()','word.isupper()', 'word.lower()', 'word.startsWith#()', 'word.startsWith@()', 'word[-2:]', 'word[-3:]', 'word.Tag']
-    
-    wordembdding=get_features("Gully")
-    for iv,value in enumerate(wordembdding):
-        csv_columns.append('v{}'.format(iv))
 
     with open('processed_data/featureVec.csv', 'w') as ofile:
         writer = csv.DictWriter(ofile, csv_columns)

@@ -20,13 +20,13 @@ y=y.astype('float32')
 X = np.nan_to_num(X)
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
 
-dtc = DecisionTreeClassifier(max_depth=32, class_weight={0:1, 1:50, 2:18, 3:1940, 4:70, 5:3, 6:25})
+dtc = DecisionTreeClassifier(max_depth=32)
 dtc.fit(X_train, y_train)
 
 y_pred = dtc.predict(X_test)
-target_names = ['I-PLACE', 'B-ORGANISATION', 'I-PERSON', 'O', 'B-PERSON', 'I-ORGANISATION', 'B-PLACE']
+target_names = ['B-ORGANISATION', 'B-PLACE', 'O', 'I-ORGANISATION ', 'I-PERSON', 'B-PERSON', 'I-PLACE',]
 
 print("Results for Decision tree..")
 
